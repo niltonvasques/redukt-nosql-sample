@@ -3,6 +3,7 @@ package com.oxeanbits.bigstorageapp
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.text.InputType
 import android.widget.LinearLayout
 import com.github.raulccabreu.redukt.actions.Action
 import com.github.raulccabreu.redukt.states.StateListener
@@ -57,8 +58,19 @@ class MainActivity : AppCompatActivity(), StateListener<AppState> {
                             onClick { redukt.dispatch(Action<Any>("INC")) }
                         }
                         button {
+                            text(state.sort)
+                            onClick { redukt.dispatch(Action<Any>("SORT")) }
+                        }
+                        button {
                             text("clear")
                             onClick { redukt.dispatch(Action<Any>("CLEAR")) }
+                        }
+                    }
+                    editText {
+                        text(state.pageSize.toString())
+                        inputType(InputType.TYPE_CLASS_NUMBER)
+                        onTextChanged {
+                            if (it.isNotEmpty()) redukt.dispatch(Action<Int>("PAGE_SIZE", it.toString().toInt()))
                         }
                     }
                     textView {

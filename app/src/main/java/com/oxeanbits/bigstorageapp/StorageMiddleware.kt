@@ -14,7 +14,7 @@ data class PagePayload (
 class StorageMiddleware : BaseAnnotatedMiddleware<AppState>() {
     var count = 0
 
-    @AfterActions(["INC", "DEC"])
+    @AfterActions(["INC", "DEC", "SORT", "PAGE_SIZE"])
     fun incAction(state: AppState, action: Action<Any>) {
         if (state.items.size > state.pageSize) {
             BigStorageApp.redukt.dispatch(Action("LOW_MEMORY", null))
@@ -25,7 +25,8 @@ class StorageMiddleware : BaseAnnotatedMiddleware<AppState>() {
     @BeforeAction("FETCH_ITEMS")
     fun fetchItems(state: AppState, action: Action<Any>) {
         val newList = state.items.toMutableList()
-        for (i in 1..(Math.pow(2.toDouble(), count.toDouble()).toInt())) {
+//        for (i in 1..(Math.pow(2.toDouble(), count.toDouble()).toInt())) {
+        for (i in 1..100) {
             newList.add(Request(0, Fakeit.business().name()))
         }
         count++
@@ -34,7 +35,7 @@ class StorageMiddleware : BaseAnnotatedMiddleware<AppState>() {
     }
 
     private fun refresh(state: AppState) {
-        val page = BigStorageApp.storage.fetch(state.page)
+        val page = BigStorageApp.storage.fetch(state.page, state.pageSize, state.sort == "ASC")
         BigStorageApp.redukt.dispatch(Action("REFRESH", PagePayload(page, BigStorageApp.storage.total())))
     }
 

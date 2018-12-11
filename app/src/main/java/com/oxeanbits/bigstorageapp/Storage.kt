@@ -1,8 +1,6 @@
 package com.oxeanbits.bigstorageapp
 
 class Storage {
-    val pageSize: Long = 100
-
     fun save(list: List<Request>) {
         val requestBox = BigStorageApp.boxStore.boxFor(Request::class.java)
         requestBox.put(list)
@@ -11,9 +9,11 @@ class Storage {
         println(list)
     }
 
-    fun fetch(page: Int): List<Request> {
+    fun fetch(page: Int, pageSize: Long = 100, sort: Boolean = false): List<Request> {
         val requestBox = BigStorageApp.boxStore.boxFor(Request::class.java)
-        return requestBox.query().build().find((page - 1) * pageSize, pageSize)
+        var query = requestBox.query()
+        if (sort) query = query.order(Request_.reason)
+        return query.build().find((page - 1) * pageSize, pageSize)
     }
 
     fun total(): Long {
