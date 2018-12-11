@@ -21,7 +21,7 @@ class StorageMiddleware : BaseAnnotatedMiddleware<AppState>() {
     fun fetchItems(state: AppState, action: Action<Any>) {
         val newList = state.items.toMutableList()
         for (i in 1..(Math.pow(2.toDouble(), count.toDouble()).toInt())) {
-            newList.add("test ${state.count}")
+            newList.add(Request(i, "Heat ${i * count}"))
         }
         count++
         BigStorageApp.storage.save(newList)

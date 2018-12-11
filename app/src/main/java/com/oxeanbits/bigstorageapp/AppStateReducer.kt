@@ -20,7 +20,7 @@ class AppStateReducer : BaseAnnotatedReducer<AppState>() {
     }
 
     @Reduce("REFRESH")
-    fun refresh(state: AppState, list: List<String>): AppState {
+    fun refresh(state: AppState, list: List<Request>): AppState {
         val newState = state.copy(items = list)
         println("REFRESH...")
         println(newState)
