@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity(), StateListener<AppState> {
                         visibility(state.lowMemory)
                     }
                     textView {
-                        text("Items on memory: ${state.items.size}")
+                        text("Items on memory: ${state.items.size} | Items on database: ${state.count}")
                     }
                     button {
                         text("FETCH!")

@@ -6,6 +6,11 @@ import com.github.raulccabreu.redukt.middlewares.BaseAnnotatedMiddleware
 import com.github.raulccabreu.redukt.middlewares.BeforeAction
 import com.mooveit.library.Fakeit
 
+data class PagePayload (
+    val requests: List<Request> = emptyList(),
+    val total: Long = 0
+)
+
 class StorageMiddleware : BaseAnnotatedMiddleware<AppState>() {
     var count = 0
 
@@ -30,7 +35,7 @@ class StorageMiddleware : BaseAnnotatedMiddleware<AppState>() {
 
     private fun refresh(state: AppState) {
         val page = BigStorageApp.storage.fetch(state.page)
-        BigStorageApp.redukt.dispatch(Action("REFRESH", page))
+        BigStorageApp.redukt.dispatch(Action("REFRESH", PagePayload(page, BigStorageApp.storage.total())))
     }
 
     @BeforeAction("CLEAR")
