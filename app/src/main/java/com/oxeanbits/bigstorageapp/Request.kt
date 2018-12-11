@@ -1,7 +1,11 @@
 package com.oxeanbits.bigstorageapp
 
+import io.objectbox.annotation.Entity
+import io.objectbox.annotation.Id
+
+@Entity
 data class Request(
-    val id: Int = -1,
+    @Id var id: Long = -1,
     val reason: String = ""
 )
 

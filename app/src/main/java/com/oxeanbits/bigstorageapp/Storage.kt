@@ -1,16 +1,23 @@
 package com.oxeanbits.bigstorageapp
 
 class Storage {
-    val pageSize = 100
-    val items = mutableListOf<Request>()
+    val pageSize: Long = 100
 
     fun save(list: List<Request>) {
-        items.addAll(list)
+        val requestBox = BigStorageApp.boxStore.boxFor(Request::class.java)
+        requestBox.put(list)
+
+        println("Storage.save")
+        println(list)
     }
 
     fun fetch(page: Int): List<Request> {
-        val fromIndex = Math.min((page-1) * pageSize, items.size - 1)
-        val toIndex = Math.min((page * pageSize) - 1, items.size - 1)
-        return items.subList(fromIndex, toIndex).toList()
+        val requestBox = BigStorageApp.boxStore.boxFor(Request::class.java)
+        return requestBox.query().build().find((page - 1) * pageSize, pageSize)
+    }
+
+    fun clear() {
+        val requestBox = BigStorageApp.boxStore.boxFor(Request::class.java)
+        requestBox.removeAll()
     }
 }

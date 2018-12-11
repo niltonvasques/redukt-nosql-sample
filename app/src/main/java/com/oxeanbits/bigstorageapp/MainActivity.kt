@@ -56,6 +56,10 @@ class MainActivity : AppCompatActivity(), StateListener<AppState> {
                             text(">")
                             onClick { redukt.dispatch(Action<Any>("INC")) }
                         }
+                        button {
+                            text("clear")
+                            onClick { redukt.dispatch(Action<Any>("CLEAR")) }
+                        }
                     }
                     textView {
                         text(state.items.toString())
