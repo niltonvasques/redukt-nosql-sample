@@ -13,6 +13,11 @@ class AppStateReducer : BaseAnnotatedReducer<AppState>() {
         return state.copy(items = items)
     }
 
+    @Reduce("REMOVE")
+    fun remove(state: AppState, id: Long): AppState {
+        return state.copy(items = state.items.filter { it.id != id })
+    }
+
     @Reduce("INC")
     fun inc(state: AppState, empty: Any?): AppState {
         return state.copy(page = state.page + 1)

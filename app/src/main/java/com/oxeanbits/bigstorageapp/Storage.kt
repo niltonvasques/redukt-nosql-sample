@@ -9,6 +9,11 @@ class Storage {
         println(list)
     }
 
+    fun remove(id: Long) {
+        val requestBox = BigStorageApp.boxStore.boxFor(Request::class.java)
+        requestBox.remove(id)
+    }
+
     fun dirty(): List<Request> {
         val requestBox = BigStorageApp.boxStore.boxFor(Request::class.java)
         var query = requestBox.query().equal(Request_.dirty, true)

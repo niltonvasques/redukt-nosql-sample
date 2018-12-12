@@ -52,4 +52,9 @@ class StorageMiddleware : BaseAnnotatedMiddleware<AppState>() {
         BigStorageApp.storage.save(state.items)
         BigStorageApp.redukt.dispatch(Action<Any>("REFRESH_REQUEST"))
     }
+
+    @AfterAction("REMOVE")
+    fun remove(state: AppState, action: Action<Long>) {
+        action.payload?.let { BigStorageApp.storage.remove(it) }
+    }
 }

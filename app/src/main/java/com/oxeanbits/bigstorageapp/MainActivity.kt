@@ -26,11 +26,17 @@ class MainActivity : AppCompatActivity(), StateListener<AppState> {
                 textColor(Color.HSVToColor(floatArrayOf(pos*3.6f, 1f, 1f)))
                 BaseDSL.centerVertical()
             }
-            button {
-                text("dirty")
+            linearLayout {
                 BaseDSL.alignParentRight()
-                visibility(!item.dirty)
-                onClick { redukt.dispatch(Action<Long>("DIRTY", item.id)) }
+                button {
+                    text("dirty")
+                    visibility(!item.dirty)
+                    onClick { redukt.dispatch(Action<Long>("DIRTY", item.id)) }
+                }
+                button {
+                    text("REMOVE")
+                    onClick { redukt.dispatch(Action<Long>("REMOVE", item.id)) }
+                }
             }
         }
     }
