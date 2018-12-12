@@ -6,6 +6,7 @@ import io.objectbox.annotation.Id
 @Entity
 data class Request(
     @Id var id: Long = -1,
-    val reason: String = ""
+    val reason: String = "",
+    val dirty: Boolean = false
 )
 

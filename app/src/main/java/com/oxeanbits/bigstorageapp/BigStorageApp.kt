@@ -20,6 +20,7 @@ class BigStorageApp : Application() {
         redukt.reducers["counter"] = AppStateReducer()
 
         redukt.middlewares["storage"] = StorageMiddleware()
+        redukt.middlewares["sync"] = SyncMiddleware()
         boxStore = MyObjectBox.builder().androidContext(this).build()
     }
 

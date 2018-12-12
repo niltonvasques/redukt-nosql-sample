@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:3785658023019372973",
-      "lastPropertyId": "2:7583493778382015664",
+      "lastPropertyId": "3:20012150629291672",
       "name": "Request",
       "properties": [
         {
@@ -15,6 +15,10 @@
         {
           "id": "2:7583493778382015664",
           "name": "reason"
+        },
+        {
+          "id": "3:20012150629291672",
+          "name": "dirty"
         }
       ],
       "relations": []

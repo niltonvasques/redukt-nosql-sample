@@ -1,6 +1,7 @@
 package com.oxeanbits.bigstorageapp
 
 import com.github.raulccabreu.redukt.actions.Action
+import com.github.raulccabreu.redukt.middlewares.AfterAction
 import com.github.raulccabreu.redukt.middlewares.AfterActions
 import com.github.raulccabreu.redukt.middlewares.BaseAnnotatedMiddleware
 import com.github.raulccabreu.redukt.middlewares.BeforeAction
@@ -19,7 +20,7 @@ class StorageMiddleware : BaseAnnotatedMiddleware<AppState>() {
         if (state.items.size > state.pageSize) {
             BigStorageApp.redukt.dispatch(Action("LOW_MEMORY", null))
         }
-        refresh(state)
+        BigStorageApp.redukt.dispatch(Action<Any>("REFRESH_REQUEST"))
     }
 
     @BeforeAction("FETCH_ITEMS")
@@ -31,10 +32,11 @@ class StorageMiddleware : BaseAnnotatedMiddleware<AppState>() {
         }
         count++
         BigStorageApp.storage.save(newList)
-        refresh(state)
+        BigStorageApp.redukt.dispatch(Action<Any>("REFRESH_REQUEST"))
     }
 
-    private fun refresh(state: AppState) {
+    @BeforeAction("REFRESH_REQUEST")
+    fun refresh(state: AppState, action: Action<Any>) {
         val page = BigStorageApp.storage.fetch(state.page, state.pageSize, state.sort == "ASC")
         BigStorageApp.redukt.dispatch(Action("REFRESH", PagePayload(page, BigStorageApp.storage.total())))
     }
@@ -42,6 +44,12 @@ class StorageMiddleware : BaseAnnotatedMiddleware<AppState>() {
     @BeforeAction("CLEAR")
     fun clear(state: AppState, action: Action<Any>) {
         BigStorageApp.storage.clear()
-        refresh(state)
+        BigStorageApp.redukt.dispatch(Action<Any>("REFRESH_REQUEST"))
+    }
+
+    @AfterAction("DIRTY")
+    fun dirty(state: AppState, action: Action<Any>) {
+        BigStorageApp.storage.save(state.items)
+        BigStorageApp.redukt.dispatch(Action<Any>("REFRESH_REQUEST"))
     }
 }

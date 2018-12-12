@@ -4,6 +4,15 @@ import com.github.raulccabreu.redukt.actions.Reduce
 import com.github.raulccabreu.redukt.reducers.BaseAnnotatedReducer
 
 class AppStateReducer : BaseAnnotatedReducer<AppState>() {
+    @Reduce("DIRTY")
+    fun dirty(state: AppState, id: Long): AppState {
+        val index = state.items.indexOfFirst { it.id == id }
+        if (index == -1) return state
+        val items = state.items.toMutableList()
+        items[index] = items[index].copy(dirty = true)
+        return state.copy(items = items)
+    }
+
     @Reduce("INC")
     fun inc(state: AppState, empty: Any?): AppState {
         return state.copy(page = state.page + 1)

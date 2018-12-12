@@ -11,15 +11,40 @@ import com.oxeanbits.bigstorageapp.BigStorageApp.Companion.redukt
 import trikita.anvil.Anvil
 import trikita.anvil.BaseDSL
 import trikita.anvil.DSL.*
+import trikita.anvil.RenderableAdapter
 import trikita.anvil.RenderableView
 
 class MainActivity : AppCompatActivity(), StateListener<AppState> {
     private var state: AppState = BigStorageApp.redukt.state
+    private val items = mutableListOf<Request>()
+
+    val requestsAdapter = RenderableAdapter.withItems(items) { pos, item ->
+        relativeLayout {
+            BaseDSL.size(BaseDSL.MATCH, BaseDSL.dip(50))
+            textView {
+                text("#0${item.id} - ${item.reason}${if (item.dirty) " (dirty)" else ""}")
+                BaseDSL.textSize(BaseDSL.sip(20.toFloat()))
+                textColor(Color.HSVToColor(floatArrayOf(pos*3.6f, 1f, 1f)))
+                BaseDSL.centerVertical()
+            }
+            button {
+                text("dirty")
+                BaseDSL.alignParentRight()
+                visibility(!item.dirty)
+                onClick { redukt.dispatch(Action<Long>("DIRTY", item.id)) }
+            }
+        }
+    }
 
     override fun onChanged(state: AppState) {
         println(state)
         this.state = state
-        Anvil.render()
+        items.clear()
+        items.addAll(state.items)
+        runOnUiThread {
+            requestsAdapter.notifyDataSetChanged()
+            Anvil.render()
+        }
     }
 
     override fun hasChanged(newState: AppState, oldState: AppState): Boolean {
@@ -57,6 +82,13 @@ class MainActivity : AppCompatActivity(), StateListener<AppState> {
                             text(">")
                             onClick { redukt.dispatch(Action<Any>("INC")) }
                         }
+                        editText {
+                            text(state.pageSize.toString())
+                            inputType(InputType.TYPE_CLASS_NUMBER)
+                            onTextChanged {
+                                if (it.isNotEmpty()) redukt.dispatch(Action<Int>("PAGE_SIZE", it.toString().toInt()))
+                            }
+                        }
                         button {
                             text(state.sort)
                             onClick { redukt.dispatch(Action<Any>("SORT")) }
@@ -65,13 +97,14 @@ class MainActivity : AppCompatActivity(), StateListener<AppState> {
                             text("clear")
                             onClick { redukt.dispatch(Action<Any>("CLEAR")) }
                         }
-                    }
-                    editText {
-                        text(state.pageSize.toString())
-                        inputType(InputType.TYPE_CLASS_NUMBER)
-                        onTextChanged {
-                            if (it.isNotEmpty()) redukt.dispatch(Action<Int>("PAGE_SIZE", it.toString().toInt()))
+                        button {
+                            text("sync")
+                            onClick { redukt.dispatch(Action<Any>("SYNC")) }
                         }
+                    }
+                    listView {
+                        adapter(requestsAdapter)
+                        BaseDSL.size(BaseDSL.MATCH, BaseDSL.MATCH)
                     }
                     textView {
                         text(state.items.toString())
@@ -80,6 +113,11 @@ class MainActivity : AppCompatActivity(), StateListener<AppState> {
             }
         })
         redukt.listeners.add(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        redukt.dispatch(Action<Any>("REFRESH_REQUEST"))
     }
 
     override fun onDestroy() {

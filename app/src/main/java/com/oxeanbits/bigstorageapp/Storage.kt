@@ -9,6 +9,12 @@ class Storage {
         println(list)
     }
 
+    fun dirty(): List<Request> {
+        val requestBox = BigStorageApp.boxStore.boxFor(Request::class.java)
+        var query = requestBox.query().equal(Request_.dirty, true)
+        return query.build().find()
+    }
+
     fun fetch(page: Int, pageSize: Long = 100, sort: Boolean = false): List<Request> {
         val requestBox = BigStorageApp.boxStore.boxFor(Request::class.java)
         var query = requestBox.query()
