@@ -1,18 +1,17 @@
 package com.oxeanbits.bigstorageapp
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.InputType
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import com.github.raulccabreu.redukt.actions.Action
 import com.github.raulccabreu.redukt.states.StateListener
 import com.oxeanbits.bigstorageapp.BigStorageApp.Companion.redukt
-import trikita.anvil.Anvil
-import trikita.anvil.BaseDSL
+import trikita.anvil.*
 import trikita.anvil.DSL.*
-import trikita.anvil.RenderableAdapter
-import trikita.anvil.RenderableView
 
 class MainActivity : AppCompatActivity(), StateListener<AppState> {
     private var state: AppState = BigStorageApp.redukt.state
@@ -57,6 +56,11 @@ class MainActivity : AppCompatActivity(), StateListener<AppState> {
             override fun view() {
                 linearLayout {
                     orientation(LinearLayout.VERTICAL)
+                    horizontalProgressBar {
+                        BaseDSL.size(BaseDSL.MATCH, BaseDSL.WRAP)
+                        visibility(state.sync)
+                        indeterminate(true)
+                    }
                     textView {
                         text("!!! LOW MEMORY !!!")
                         gravity(BaseDSL.CENTER)
@@ -123,4 +127,14 @@ class MainActivity : AppCompatActivity(), StateListener<AppState> {
     override fun onDestroy() {
         super.onDestroy()
     }
+
+    inline fun horizontalProgressBar(crossinline func: () -> Unit) {
+        DSL.v(HorizontalProgressBar::class.java) {
+            func()
+        }
+    }
+
+    class HorizontalProgressBar(context: Context):
+        ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal)
+
 }

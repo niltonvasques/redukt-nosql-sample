@@ -46,4 +46,14 @@ class AppStateReducer : BaseAnnotatedReducer<AppState>() {
         val size = Math.max(1, Math.min(pageSize, 100))
         return state.copy(pageSize = size)
     }
+
+    @Reduce("SYNC")
+    fun sync(state: AppState, empty: Any?): AppState {
+        return state.copy(sync = true)
+    }
+
+    @Reduce("SYNC_END")
+    fun syncEnd(state: AppState, empty: Any?): AppState {
+        return state.copy(sync = false)
+    }
 }

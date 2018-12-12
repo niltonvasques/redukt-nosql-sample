@@ -6,5 +6,6 @@ data class AppState (
     val sort: String = "NONE",
     val page: Int = 1,
     val pageSize: Long = 100,
-    val lowMemory: Boolean = false
+    val lowMemory: Boolean = false,
+    val sync: Boolean = false
 )
