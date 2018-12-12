@@ -44,9 +44,9 @@ class MainActivity : AppCompatActivity(), StateListener<AppState> {
     override fun onChanged(state: AppState) {
         println(state)
         this.state = state
-        items.clear()
-        items.addAll(state.items)
         runOnUiThread {
+            items.clear()
+            items.addAll(state.items)
             requestsAdapter.notifyDataSetChanged()
             Anvil.render()
         }
@@ -80,9 +80,18 @@ class MainActivity : AppCompatActivity(), StateListener<AppState> {
                         text("FETCH!")
                         onClick { redukt.dispatch(Action<Any>("FETCH_ITEMS")) }
                     }
+                    button {
+                        text("FETCH 2^n items")
+                        onClick { redukt.dispatch(Action<Any>("FETCH_MANY_ITEMS")) }
+                    }
+                    button {
+                        text("sync")
+                        onClick { redukt.dispatch(Action<Any>("SYNC")) }
+                    }
                     linearLayout {
                         button {
                             text("<")
+                            BaseDSL.size(dip(50), BaseDSL.WRAP)
                             onClick { redukt.dispatch(Action<Any>("DEC")) }
                         }
                         textView {
@@ -90,6 +99,7 @@ class MainActivity : AppCompatActivity(), StateListener<AppState> {
                         }
                         button {
                             text(">")
+                            BaseDSL.size(dip(50), BaseDSL.WRAP)
                             onClick { redukt.dispatch(Action<Any>("INC")) }
                         }
                         editText {
@@ -107,13 +117,11 @@ class MainActivity : AppCompatActivity(), StateListener<AppState> {
                             text("clear")
                             onClick { redukt.dispatch(Action<Any>("CLEAR")) }
                         }
-                        button {
-                            text("sync")
-                            onClick { redukt.dispatch(Action<Any>("SYNC")) }
-                        }
                     }
                     listView {
-                        adapter(requestsAdapter)
+                        init {
+                            adapter(requestsAdapter)
+                        }
                         BaseDSL.size(BaseDSL.MATCH, BaseDSL.MATCH)
                     }
                     textView {
